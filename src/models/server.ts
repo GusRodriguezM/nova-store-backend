@@ -2,6 +2,7 @@ import express, { type Application } from 'express';
 import cors from 'cors';
 
 import userRoutes from '../routes/users';
+import dbConnection from '../database/config';
 
 interface APIPaths {
     users: string
@@ -19,6 +20,9 @@ class Server {
         this.app = express();
         this.port = process.env.PORT || '8080';
 
+        //DB connection
+        this.connectionToDB();
+
         //Middlewares
         this.middlewares();
 
@@ -26,9 +30,8 @@ class Server {
         this.routes();
     }
 
-    //App routes
-    routes() {
-        this.app.use( this.apiPaths.users, userRoutes );
+    async connectionToDB() {
+        await dbConnection();
     }
 
     //Middlewares
@@ -41,6 +44,12 @@ class Server {
 
         //Public folder
         this.app.use( express.static('public') );
+    }
+
+
+    //App routes
+    routes() {
+        this.app.use( this.apiPaths.users, userRoutes );
     }
 
     //Port for the app to run
