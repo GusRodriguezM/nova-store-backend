@@ -13,10 +13,18 @@ type ReqBody = {
     googleAuth: boolean;
 }
 
-export const getUsers = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'getUsers'
-    });
+export const getUsers = async( req: Request, res: Response ) => {
+    const { limit = 5, from = 0 } = req.query;
+    const query = { status: true };
+
+    const [ total , users ] = await Promise.all([
+        User.countDocuments( query ),
+        User.find( query )
+            .skip( Number(from) )
+            .limit( Number(limit) )
+    ]);
+
+    res.json({ total, users });
 }
 
 export const getUser = ( req: Request, res: Response ) => {
@@ -41,7 +49,7 @@ export const createUser = async( req: Request, res: Response ) => {
     //Save it to the DB
     await user.save();
 
-    res.json({ user });
+    res.json( user );
 }
 
 export const editUser = async( req: Request, res: Response ) => {
@@ -57,7 +65,7 @@ export const editUser = async( req: Request, res: Response ) => {
 
     const user = await User.findByIdAndUpdate( id, rest );
     
-    res.json({ user });
+    res.json( user );
 }
 
 export const deleteUser = ( req: Request, res: Response ) => {

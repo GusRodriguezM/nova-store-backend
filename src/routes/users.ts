@@ -7,6 +7,7 @@ import { emailExistsInDB, existUserById, isValidMongoId, isValidRole } from "../
 const router = Router();
 
 router.get( '/', getUsers );
+
 router.get( '/:id', getUser );
 
 router.post( '/', [
