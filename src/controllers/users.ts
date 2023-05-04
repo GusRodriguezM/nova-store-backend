@@ -2,6 +2,16 @@ import { Request, Response } from 'express';
 import User, { type IUser } from '../models/user';
 import bcrypt from 'bcryptjs';
 
+type ReqBody = {
+    _id: string;
+    name: string;
+    email: string;
+    image: string;
+    password: string;
+    role: string;
+    status: boolean;
+    googleAuth: boolean;
+}
 
 export const getUsers = ( req: Request, res: Response ) => {
     res.json({
@@ -20,7 +30,7 @@ export const getUser = ( req: Request, res: Response ) => {
 
 export const createUser = async( req: Request, res: Response ) => {
     
-    const { name, email, password, role }: IUser = req.body;
+    const { name, email, password, role }: ReqBody = req.body;
 
     const user = new User({ name, email, password, role });
 
@@ -34,15 +44,20 @@ export const createUser = async( req: Request, res: Response ) => {
     res.json({ user });
 }
 
-export const editUser = ( req: Request, res: Response ) => {
+export const editUser = async( req: Request, res: Response ) => {
     const { id } = req.params;
-    const { body } = req;
+    const { _id, googleAuth, email, ...rest }: ReqBody = req.body;
+    const { password } = rest;
+
+    if( password ){
+        //Encrypt the password
+        const salt = bcrypt.genSaltSync();
+        rest.password = bcrypt.hashSync( password, salt );
+    }
+
+    const user = await User.findByIdAndUpdate( id, rest );
     
-    res.json({
-        msg: 'editUser',
-        id,
-        body
-    });
+    res.json({ user });
 }
 
 export const deleteUser = ( req: Request, res: Response ) => {
