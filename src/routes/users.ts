@@ -6,10 +6,16 @@ import { emailExistsInDB, existUserById, isValidMongoId, isValidRole } from "../
 
 const router = Router();
 
+//Get users route
 router.get( '/', getUsers );
 
-router.get( '/:id', getUser );
+//Get user by id route
+router.get( '/:id', [
+    param( 'id' ).custom( existUserById ),
+    validateFields
+], getUser );
 
+//Create user route
 router.post( '/', [
     body( 'name', 'The name is requred' ).not().isEmpty(),
     body( 'email', 'The email is not valid' ).isEmail(),
@@ -19,14 +25,14 @@ router.post( '/', [
     validateFields
 ], createUser );
 
+//Edit user route
 router.put( '/:id', [
     param( 'id' ).custom( existUserById ),
     body( 'role' ).custom( isValidRole ),
     validateFields
 ], editUser );
 
+//Delete user route
 router.delete( '/:id', deleteUser );
-
-
 
 export default router;

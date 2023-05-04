@@ -13,6 +13,7 @@ type ReqBody = {
     googleAuth: boolean;
 }
 
+//Get users controller
 export const getUsers = async( req: Request, res: Response ) => {
     const { limit = 5, from = 0 } = req.query;
     const query = { status: true };
@@ -27,15 +28,16 @@ export const getUsers = async( req: Request, res: Response ) => {
     res.json({ total, users });
 }
 
-export const getUser = ( req: Request, res: Response ) => {
+//Get user controller
+export const getUser = async( req: Request, res: Response ) => {
     const { id } = req.params;
 
-    res.json({
-        msg: 'getUser',
-        id
-    });
+    const user = await User.findById( id );
+
+    res.json( user );
 }
 
+//Create user controller
 export const createUser = async( req: Request, res: Response ) => {
     
     const { name, email, password, role }: ReqBody = req.body;
@@ -52,6 +54,7 @@ export const createUser = async( req: Request, res: Response ) => {
     res.json( user );
 }
 
+//Edit user controller
 export const editUser = async( req: Request, res: Response ) => {
     const { id } = req.params;
     const { _id, googleAuth, email, ...rest }: ReqBody = req.body;
@@ -68,6 +71,7 @@ export const editUser = async( req: Request, res: Response ) => {
     res.json( user );
 }
 
+//Delete user controller
 export const deleteUser = ( req: Request, res: Response ) => {
     const { id } = req.params;
 
