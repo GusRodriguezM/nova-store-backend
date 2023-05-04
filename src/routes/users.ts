@@ -33,6 +33,9 @@ router.put( '/:id', [
 ], editUser );
 
 //Delete user route
-router.delete( '/:id', deleteUser );
+router.delete( '/:id', [
+    param( 'id' ).custom( existUserById ),
+    validateFields
+], deleteUser );
 
 export default router;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User, { type IUser } from '../models/user';
+import User from '../models/user';
 import bcrypt from 'bcryptjs';
 
 type ReqBody = {
@@ -31,8 +31,9 @@ export const getUsers = async( req: Request, res: Response ) => {
 //Get user controller
 export const getUser = async( req: Request, res: Response ) => {
     const { id } = req.params;
+    const query = { status: true };
 
-    const user = await User.findById( id );
+    const user = await User.findById( id ).where( query );
 
     res.json( user );
 }
@@ -72,11 +73,10 @@ export const editUser = async( req: Request, res: Response ) => {
 }
 
 //Delete user controller
-export const deleteUser = ( req: Request, res: Response ) => {
+export const deleteUser = async( req: Request, res: Response ) => {
     const { id } = req.params;
 
-    res.json({
-        msg: 'deleteUser',
-        id
-    });
+    const user = await User.findByIdAndUpdate( id, { status: false } );
+
+    res.json( user );
 }
