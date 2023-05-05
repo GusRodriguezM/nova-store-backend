@@ -2,10 +2,12 @@ import express, { type Application } from 'express';
 import cors from 'cors';
 
 import userRoutes from '../routes/users';
+import authRoutes from '../routes/auth';
 import dbConnection from '../database/config';
 
 interface APIPaths {
-    users: string
+    users: string;
+    auth: string;   
 }
 
 class Server {
@@ -13,7 +15,8 @@ class Server {
     private app: Application;
     private port: string;
     private apiPaths: APIPaths = {
-        users: '/api/users'
+        users: '/api/users',
+        auth: '/api/auth'
     }
 
     constructor() {
@@ -49,6 +52,7 @@ class Server {
 
     //App routes
     routes() {
+        this.app.use( this.apiPaths.auth, authRoutes )
         this.app.use( this.apiPaths.users, userRoutes );
     }
 
@@ -56,7 +60,7 @@ class Server {
     listen() {
         this.app.listen( this.port, () => {
             console.log(`Server running on Port: ${this.port}`);
-        } )
+        })
     }
 
 }
