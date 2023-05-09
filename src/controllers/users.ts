@@ -41,9 +41,9 @@ export const getUser = async( req: Request, res: Response ) => {
 //Create user controller
 export const createUser = async( req: Request, res: Response ) => {
     
-    const { name, email, password, role }: ReqBody = req.body;
+    const { name, email, password }: ReqBody = req.body;
 
-    const user = new User({ name, email, password, role });
+    const user = new User({ name, email, password });
 
     //Encrypt the password
     const salt = bcrypt.genSaltSync();

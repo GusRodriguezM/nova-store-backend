@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { body, param } from 'express-validator';
 import { createUser, deleteUser, editUser, getUser, getUsers } from "../controllers/users";
-import { validateFields } from "../middlewares/fields-validator";
 import { emailExistsInDB, existUserById, isValidMongoId, isValidRole } from "../helpers/db-validators";
+import { validateFields } from "../middlewares/fields-validator";
+import { validateJWT } from "../middlewares/validate-jwt";
+import { hasRole, isAdminRole } from "../middlewares/validate-roles";
+import { Roles } from "../types/types";
 
 const router = Router();
 
@@ -21,7 +24,7 @@ router.post( '/', [
     body( 'email', 'The email is not valid' ).isEmail(),
     body( 'email' ).custom( emailExistsInDB ),
     body( 'password', 'The password should be at least 6 characters long' ).isLength({ min: 6 }),
-    body( 'role' ).custom( isValidRole ),
+    // body( 'role' ).custom( isValidRole ),
     validateFields
 ], createUser );
 
@@ -34,6 +37,9 @@ router.put( '/:id', [
 
 //Delete user route
 router.delete( '/:id', [
+    validateJWT,
+    isAdminRole,
+    // hasRole( Roles.ADMIN, Roles.USER ),
     param( 'id' ).custom( existUserById ),
     validateFields
 ], deleteUser );
