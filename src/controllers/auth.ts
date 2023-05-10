@@ -2,11 +2,15 @@ import { Request, Response } from "express";
 import bcryptjs from 'bcryptjs';
 
 import User from "../models/user";
-import { generateJWT } from "../helpers";
+import { generateJWT, googleVerify } from "../helpers";
 
 type ReqBody = {
     email: string;
     password: string;
+}
+
+type Token = {
+    id_token: string;
 }
 
 //Login API controller
@@ -50,5 +54,28 @@ export const login = async( req: Request, res: Response ) => {
         console.log(error);
         res.status(500).json({ msg: 'Something went wrong!' });
     }
+
+}
+
+export const googleSignIn = async( req: Request, res: Response ) => {
+    const { id_token }: Token = req.body;
+
+    try {
+        
+        const googleUser = await googleVerify( id_token );
+        console.log(googleUser);
+        
+        res.json({
+            msg: 'Token received: ok!',
+            id_token
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            ok: false,
+            msg: 'The token could not be verified'
+        });
+    }
+
 
 }
