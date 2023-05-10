@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import User from "../models/user";
-
 import bcryptjs from 'bcryptjs';
-import { generateJWT } from "../helpers/generate-jwt";
+
+import User from "../models/user";
+import { generateJWT } from "../helpers";
 
 type ReqBody = {
     email: string;

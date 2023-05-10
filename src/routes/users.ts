@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { body, param } from 'express-validator';
 import { createUser, deleteUser, editUser, getUser, getUsers } from "../controllers/users";
-import { emailExistsInDB, existUserById, isValidMongoId, isValidRole } from "../helpers/db-validators";
-import { validateFields } from "../middlewares/fields-validator";
-import { validateJWT } from "../middlewares/validate-jwt";
-import { hasRole, isAdminRole } from "../middlewares/validate-roles";
+
+import { emailExistsInDB, existUserById, isValidMongoId, isValidRole } from "../helpers";
+import { hasRole, isAdminRole, validateFields, validateJWT } from "../middlewares";
+
 import { Roles } from "../types/types";
 
 const router = Router();
