@@ -1,13 +1,15 @@
 import express, { type Application } from 'express';
 import cors from 'cors';
 
-import userRoutes from '../routes/users';
+import usersRoutes from '../routes/users';
 import authRoutes from '../routes/auth';
+import categoriesRoutes from '../routes/categories';
 import dbConnection from '../database/config';
 
 interface APIPaths {
+    auth: string;
+    categories: string;
     users: string;
-    auth: string;   
 }
 
 class Server {
@@ -15,8 +17,9 @@ class Server {
     private app: Application;
     private port: string;
     private apiPaths: APIPaths = {
-        users: '/api/users',
-        auth: '/api/auth'
+        auth: '/api/auth',
+        categories: '/api/categories',
+        users: '/api/users'
     }
 
     constructor() {
@@ -52,8 +55,9 @@ class Server {
 
     //App routes
     routes() {
-        this.app.use( this.apiPaths.auth, authRoutes )
-        this.app.use( this.apiPaths.users, userRoutes );
+        this.app.use( this.apiPaths.auth, authRoutes );
+        this.app.use( this.apiPaths.categories, categoriesRoutes );
+        this.app.use( this.apiPaths.users, usersRoutes );
     }
 
     //Port for the app to run
