@@ -13,6 +13,14 @@ type Token = {
     id_token: string;
 }
 
+type DataToSave = {
+    name?: string;
+    email?: string;
+    password: string;
+    image?: string,
+    googleAuth: boolean
+}
+
 //Login API controller
 export const login = async( req: Request, res: Response ) => {
 
@@ -62,13 +70,35 @@ export const googleSignIn = async( req: Request, res: Response ) => {
 
     try {
         
-        const googleUser = await googleVerify( id_token );
-        console.log(googleUser);
+        const { name, email, image } = await googleVerify( id_token );
         
-        res.json({
-            msg: 'Token received: ok!',
-            id_token
-        });
+        let user = await User.findOne({ email });
+
+        //Create a new user if does not exist in the DB
+        if( !user ){
+            const data: DataToSave = {
+                name,
+                email,
+                password: '1w-N0t.4-q455m0rD',
+                image,
+                googleAuth: true
+            }
+
+            user = new User( data );
+            await user.save();
+        }
+
+        //If the status of the DB is false then negate the access
+        if( !user.status ){
+            return res.status(401).json({
+                msg: 'Please talk with the admin. User is blocked!'
+            })
+        }
+
+        //Generate the JWT 
+        const token = await generateJWT( user.id );
+        
+        res.json({ user, token });
 
     } catch (error) {
         res.status(400).json({
