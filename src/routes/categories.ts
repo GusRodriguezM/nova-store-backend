@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { createCategory, deleteCategory, getCategories, getCategoryById, updateCategory } from "../controllers/categories";
+import { isAdminRole, validateFields, validateJWT } from "../middlewares";
+import { body } from "express-validator";
 
 const router = Router();
 
@@ -10,7 +12,13 @@ router.get( '/', getCategories );
 router.get( '/:id', getCategoryById );
 
 //Create a category
-router.post( '/', createCategory );
+router.post( '/', [
+    validateJWT,
+    isAdminRole,
+    body( 'name', 'The name of the category is required' ).not().isEmpty(),
+    body( 'name', 'The name of the subcategory is required' ).not().isEmpty(),
+    validateFields
+], createCategory );
 
 //Update a category by id
 router.put( '/:id', updateCategory );

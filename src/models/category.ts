@@ -10,12 +10,12 @@ export interface InterfaceCategory {
 const CategorySchema = new Schema<InterfaceCategory>({
     name: {
         type: String,
-        required: [true, 'The name is required'],
+        required: [true, 'The category name is required'],
         unique: true
     },
     subcategory: {
         type: String,
-        required: [true, 'The category is required'],
+        required: [true, 'The subcategory name is required'],
     },
     status: {
         type: Boolean,
