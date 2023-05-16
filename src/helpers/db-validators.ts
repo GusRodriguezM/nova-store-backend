@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
-import Role from "../models/role";
-import User from "../models/user";
+import { Role, User } from "../models";
 
 //Verify if the role sent by the user is a valid value compared to the DB
 export const isValidRole = async( role: string = '' ) => {

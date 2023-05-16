@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-export interface IUser {
+export interface InterfaceUser {
     name: string;
     email: string;
     password: string;
@@ -10,7 +10,7 @@ export interface IUser {
     googleAuth: boolean;
 }
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<InterfaceUser>({
     name: {
         type: String,
         required: [true, 'The name is required']
@@ -49,4 +49,4 @@ UserSchema.methods.toJSON = function(){
     return user;
 }
 
-export default model<IUser>( 'User', UserSchema );
+export default model<InterfaceUser>( 'User', UserSchema );

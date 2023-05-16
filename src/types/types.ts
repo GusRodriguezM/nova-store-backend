@@ -1,9 +1,9 @@
 import { Request } from 'express';
 import { Document, Types } from 'mongoose';
-import { IUser } from '../models/user';
+import { InterfaceUser } from '../models/user';
 
 export interface CustomRequest extends Request {
-    user: Document<unknown, {}, IUser> & Omit<IUser & { _id: Types.ObjectId; }, never>
+    user: Document<unknown, {}, InterfaceUser> & Omit<InterfaceUser & { _id: Types.ObjectId; }, never>
 }
 
 export enum Roles {
