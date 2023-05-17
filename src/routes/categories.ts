@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { createCategory, deleteCategory, getCategories, getCategoryById, updateCategory } from "../controllers/categories";
 import { isAdminRole, validateFields, validateJWT } from "../middlewares";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
+import { existCategory } from "../helpers";
 
 const router = Router();
 
@@ -21,7 +22,14 @@ router.post( '/', [
 ], createCategory );
 
 //Update a category by id
-router.put( '/:id', updateCategory );
+router.put( '/:id', [
+    validateJWT,
+    isAdminRole,
+    param( 'id' ).custom( existCategory ),
+    body( 'name', 'The name of the category is required' ).not().isEmpty(),
+    body( 'name', 'The name of the subcategory is required' ).not().isEmpty(),
+    validateFields
+], updateCategory );
 
 //Delete a category by id
 router.delete( '/:id', deleteCategory );

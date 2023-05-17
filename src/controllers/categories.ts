@@ -2,9 +2,23 @@ import { Request, Response } from "express";
 import { Category } from "../models";
 import { CustomRequest } from "../types/types";
 
-type ReqBody = {
+interface CategoryReqBody {
     name: string;
     subcategory: string;
+    status: boolean;
+    user: UserReqBody;
+    [key: string]: any; //This will help to add a new property to the object with any type
+}
+
+type UserReqBody = {
+    _id: string;
+    name: string;
+    email: string;
+    image: string;
+    password: string;
+    role: string;
+    status: boolean;
+    googleAuth: boolean;
 }
 
 //Get all the categories
@@ -57,10 +71,24 @@ export const createCategory = async( req: Request, res: Response ) => {
 }
 
 //Update a category by id
-export const updateCategory = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'Todo ok!'
-    });
+export const updateCategory = async( req: Request, res: Response ) => {
+
+    const { id } = req.params;
+    const { status, user, ...data }: CategoryReqBody = req.body;
+
+    //Getting the type user from the custom request
+    const { user: userCustom } = req as CustomRequest;
+
+
+    data.name = data.name.toUpperCase();
+    data.subcategory = data.subcategory.toUpperCase();
+    //Adding the user id to the data
+    data.user = userCustom._id;
+
+    //Updating the category by sending the name and the user id, it returns the object updated
+    const category = await Category.findByIdAndUpdate( id, data, { new: true } );
+
+    res.json( category );
 }
 
 //Delete category by id
