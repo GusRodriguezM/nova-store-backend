@@ -92,8 +92,12 @@ export const updateCategory = async( req: Request, res: Response ) => {
 }
 
 //Delete category by id
-export const deleteCategory = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'Todo ok!'
-    });
+export const deleteCategory = async( req: Request, res: Response ) => {
+
+    const { id } = req.params;
+
+    //Updating the category by sending the id. It changes the status to false
+    const deletedCategory = await Category.findByIdAndUpdate( id, { status: false }, { new: true } );
+
+    res.json( deletedCategory );
 }

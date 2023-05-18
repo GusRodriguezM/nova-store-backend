@@ -32,7 +32,12 @@ router.put( '/:id', [
 ], updateCategory );
 
 //Delete a category by id
-router.delete( '/:id', deleteCategory );
+router.delete( '/:id', [
+    validateJWT,
+    isAdminRole,
+    param( 'id' ).custom( existCategory ),
+    validateFields
+], deleteCategory );
 
 
 export default router;
