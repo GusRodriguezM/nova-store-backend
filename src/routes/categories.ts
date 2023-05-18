@@ -10,7 +10,10 @@ const router = Router();
 router.get( '/', getCategories );
 
 //Get a category by id
-router.get( '/:id', getCategoryById );
+router.get( '/:id', [
+    param( 'id' ).custom( existCategory ),
+    validateFields
+], getCategoryById );
 
 //Create a category
 router.post( '/', [

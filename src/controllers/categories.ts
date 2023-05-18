@@ -43,10 +43,13 @@ export const getCategories = async( req: Request, res: Response ) => {
 }
 
 //Get category by id
-export const getCategoryById = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'Todo ok!'
-    });
+export const getCategoryById = async( req: Request, res: Response ) => {
+
+    const { id } = req.params;
+
+    const category = await Category.findById( id ).populate( 'user', 'name' );
+
+    res.json( category );
 }
 
 //Create a new category
