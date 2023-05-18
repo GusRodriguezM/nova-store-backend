@@ -21,10 +21,25 @@ type UserReqBody = {
 }
 
 //Get all the categories
-export const getCategories = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'Todo ok!'
-    });
+export const getCategories = async( req: Request, res: Response ) => {
+
+    const { limit = 5, from  = 0 } = req.query;
+    const query = { status: true };
+
+    /**
+     * Waits for the promises to be resolved and gets the total number of documents
+     * Gets all the documents that has the status equals true
+     */
+    const [ total, categories ] = await Promise.all([
+        Category.countDocuments( query ),
+        Category.find( query )
+            //populate returns the object referenced by its id
+            .populate( 'user', 'name' )
+            .skip( Number(from) )
+            .limit( Number(limit) )
+    ]);
+
+    res.json({ total, categories });
 }
 
 //Get category by id
