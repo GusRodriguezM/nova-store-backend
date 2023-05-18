@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 
 export interface InterfaceCategory {
     name: string;
-    subcategory: string;
     status: boolean;
     user: Schema.Types.ObjectId;
 }
@@ -11,11 +10,6 @@ const CategorySchema = new Schema<InterfaceCategory>({
     name: {
         type: String,
         required: [true, 'The category name is required'],
-        unique: true
-    },
-    subcategory: {
-        type: String,
-        required: [true, 'The subcategory name is required'],
     },
     status: {
         type: Boolean,

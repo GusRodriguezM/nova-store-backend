@@ -4,7 +4,6 @@ import { CustomRequest } from "../types/types";
 
 interface CategoryReqBody {
     name: string;
-    subcategory: string;
     status: boolean;
     user: UserReqBody;
     [key: string]: any; //This will help to add a new property to the object with any type
@@ -38,17 +37,15 @@ export const getCategoryById = ( req: Request, res: Response ) => {
 //Create a new category
 export const createCategory = async( req: Request, res: Response ) => {
 
-    // const { name, subcategory }: ReqBody = req.body;
     const name: string = req.body.name.toUpperCase();
-    const subcategory: string = req.body.subcategory.toUpperCase();
 
     //Searchs for a category and subcategory
-    const categoryDB = await Category.findOne({ name, subcategory });
+    const categoryDB = await Category.findOne({ name });
 
     //Searches in the database for any other category with the same name
     if( categoryDB ){
         return res.status(400).json({
-            msg: `The category ${name} with subcategory ${subcategory} already exists`
+            msg: `The category ${name} already exists`
         });
     }
 
@@ -58,7 +55,6 @@ export const createCategory = async( req: Request, res: Response ) => {
     //Prepare the data to save in the DB
     const data = {
         name,
-        subcategory,
         user: user._id
     }
 
@@ -81,7 +77,6 @@ export const updateCategory = async( req: Request, res: Response ) => {
 
 
     data.name = data.name.toUpperCase();
-    data.subcategory = data.subcategory.toUpperCase();
     //Adding the user id to the data
     data.user = userCustom._id;
 

@@ -17,7 +17,6 @@ router.post( '/', [
     validateJWT,
     isAdminRole,
     body( 'name', 'The name of the category is required' ).not().isEmpty(),
-    body( 'name', 'The name of the subcategory is required' ).not().isEmpty(),
     validateFields
 ], createCategory );
 
@@ -27,7 +26,6 @@ router.put( '/:id', [
     isAdminRole,
     param( 'id' ).custom( existCategory ),
     body( 'name', 'The name of the category is required' ).not().isEmpty(),
-    body( 'name', 'The name of the subcategory is required' ).not().isEmpty(),
     validateFields
 ], updateCategory );
 
