@@ -35,14 +35,15 @@ const ProductSchema = new Schema<InterfaceProduct>({
     },
     content: {
         type: String,
-        required: true
+        default: ""
     },
     quantity: {
         type: Number,
         default: 0
     },
     description: {
-        type: String
+        type: String,
+        default: ""
     },
     available: {
         type: Boolean,
