@@ -40,10 +40,17 @@ export const getProducts = async( req: Request, res: Response ) => {
 }
 
 //Controller to get a product by id
-export const getProductById = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'getProductById - ok!'
-    })
+export const getProductById = async( req: Request, res: Response ) => {
+
+    const { id } = req.params;
+
+    //Returns the product with the reference of the user and the category
+    const product = await Product.findById( id )
+        .populate( 'user', 'name' )
+        .populate( 'category', 'name' );
+
+    res.json( product );
+    
 }
 
 //Controller to create a product
