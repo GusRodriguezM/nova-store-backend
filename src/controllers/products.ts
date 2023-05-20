@@ -17,10 +17,26 @@ interface ProductReqBody {
 }
 
 //Controller to get all the products
-export const getProducts = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'getProducts - ok!'
-    })
+export const getProducts = async( req: Request, res: Response ) => {
+
+    const { limit = 5, from = 0 } = req.query;
+    const query = { status: true };
+
+    /**
+     * Promise that resolves:
+     * 1. Count all the documents with the status = true
+     * 2. Find all documents (with status = true) with the info about the (related) Category and the user who created it
+     */
+    const [ total, products ] = await Promise.all([
+        Product.countDocuments( query ),
+        Product.find( query )
+            .populate( 'user', 'name' )
+            .populate( 'category', 'name' )
+            .skip( Number( from ) )
+            .limit( Number( limit) )
+    ]);
+
+    res.json({ total, products });
 }
 
 //Controller to get a product by id
