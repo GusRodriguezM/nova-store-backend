@@ -121,8 +121,12 @@ export const updateProduct = async( req: Request, res: Response ) => {
 }
 
 //Controller to delete a product by id
-export const deleteProduct = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'deleteProduct - ok!'
-    })
+export const deleteProduct = async( req: Request, res: Response ) => {
+
+    const { id } = req.params;
+
+    //Finds the product to delete and changes the status to false
+    const deletedProduct = await Product.findByIdAndUpdate( id, { status: false }, { new: true } );
+    
+    res.json( deletedProduct );
 }

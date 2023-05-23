@@ -34,6 +34,11 @@ router.put( '/:id', [
 ], updateProduct );
 
 //Delete a product by id
-router.delete( '/:id', deleteProduct );
+router.delete( '/:id', [
+    validateJWT,
+    isAdminRole,
+    param( 'id' ).custom( existProduct ),
+    validateFields
+], deleteProduct );
 
 export default router;
