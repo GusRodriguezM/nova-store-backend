@@ -91,10 +91,33 @@ export const createProduct = async( req: Request, res: Response ) => {
 }
 
 //Controller to update a product by id
-export const updateProduct = ( req: Request, res: Response ) => {
-    res.json({
-        msg: 'updateProduct - ok!'
-    })
+export const updateProduct = async( req: Request, res: Response ) => {
+
+    const { id } = req.params;
+    const { status, user, ...body }: ProductReqBody = req.body;
+
+    if( body.name ){
+        body.name = body.name.toUpperCase();
+    }
+
+    if( body.brand ){
+        body.brand = body.brand.toUpperCase();
+    }
+
+    //Getting the type user from the custom request
+    const { user: userCustom } = req as CustomRequest;
+
+    //Prepare the data to send
+    const data = {
+        ...body,
+        user: userCustom._id
+    }
+
+    //Updating only the properties that come in the request
+    const product = await Product.findByIdAndUpdate( id, data, { new: true } );
+
+    res.json( product );
+
 }
 
 //Controller to delete a product by id

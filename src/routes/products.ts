@@ -26,7 +26,12 @@ router.post( '/', [
 ], createProduct );
 
 //Update a product
-router.put( '/:id', updateProduct );
+router.put( '/:id', [
+    validateJWT,
+    isAdminRole,
+    param( 'id' ).custom( existProduct ),
+    validateFields
+], updateProduct );
 
 //Delete a product by id
 router.delete( '/:id', deleteProduct );
