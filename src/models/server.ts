@@ -4,6 +4,7 @@ import cors from 'cors';
 import authRoutes from '../routes/auth';
 import categoriesRoutes from '../routes/categories';
 import productsRoutes from '../routes/products';
+import searchRoutes from '../routes/search';
 import usersRoutes from '../routes/users';
 import dbConnection from '../database/config';
 
@@ -11,6 +12,7 @@ interface APIPaths {
     auth: string;
     categories: string;
     products: string;
+    search: string;
     users: string;
 }
 
@@ -22,6 +24,7 @@ class Server {
         auth: '/api/auth',
         categories: '/api/categories',
         products: '/api/products',
+        search: '/api/search',
         users: '/api/users'
     }
 
@@ -61,6 +64,7 @@ class Server {
         this.app.use( this.apiPaths.auth, authRoutes );
         this.app.use( this.apiPaths.categories, categoriesRoutes );
         this.app.use( this.apiPaths.products,  productsRoutes );
+        this.app.use( this.apiPaths.search, searchRoutes )
         this.app.use( this.apiPaths.users, usersRoutes );
     }
 
