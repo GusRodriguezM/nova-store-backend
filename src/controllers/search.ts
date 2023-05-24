@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { User } from "../models";
+import { Category, User } from "../models";
 
 enum Collections {
     CATEGORIES = 'categories',
@@ -9,6 +9,7 @@ enum Collections {
     USERS = 'users',
 }
 
+//Main function for all the searches
 export const search = ( req: Request, res: Response ) => {
 
     const { collection, searchTerm } = req.params;
@@ -16,6 +17,7 @@ export const search = ( req: Request, res: Response ) => {
     switch ( collection ) {
 
         case Collections.CATEGORIES:
+            searchCategories( searchTerm, res );
             break;
         
         case Collections.PRODUCTS:
@@ -35,18 +37,24 @@ export const search = ( req: Request, res: Response ) => {
 
 }
 
+//Function to search in the users collection by name, email or id
 const searchUsers = async( searchTerm: string = '', res: Response ) => {
 
+    //Checking if the searchTerm is a valid mongo id
     const { ObjectId } = Types;
     const isMongoId = ObjectId.isValid( searchTerm );
 
+    //If it's a mongo id then search a user by the id
     if( isMongoId ){
         const user = await User.findById( searchTerm );
+
+        //Return an user if exists or else an empty array
         return res.json({
             results: user ? [ user ] : []
         });
     }
 
+    //Regular expression to avoid the case sensitive comparison betwen the search term and the name of the user
     const regexp = new RegExp( searchTerm, 'i' );
 
     const name = { name: regexp };
@@ -54,10 +62,12 @@ const searchUsers = async( searchTerm: string = '', res: Response ) => {
     const query = { status: true };
 
     const [ total, users ] = await Promise.all([
+        //Counting the results based on the name or the email and with the status equals true
         User.countDocuments({
             $or: [ name, email ],
             $and: [ query ]
         }),
+        //Searching for an user based on the name or the email and with the status equals true
         User.find({
             $or: [ name, email ],
             $and: [ query ]
@@ -65,5 +75,35 @@ const searchUsers = async( searchTerm: string = '', res: Response ) => {
     ]);
 
     res.json({ total, results: users });
+
+}
+
+//Function to search in the categories collection by the name
+const searchCategories = async( searchTerm: string = '', res: Response ) => {
+
+    const { ObjectId } = Types;
+    const isMongoId = ObjectId.isValid( searchTerm );
+
+    if( isMongoId ){
+        const category = await Category.findById( searchTerm );
+        return res.json({
+            results: category ? [ category ] : []
+        });
+    }
+
+    const regexp = new RegExp( searchTerm, 'i' );
+
+    const data = {
+        name: regexp,
+        status: true
+    }
+
+    const [ total, categories ] = await Promise.all([
+        //Counting the results based on the name and the status equals true
+        Category.countDocuments( data ),
+        Category.find( data )
+    ]);
+
+    res.json({ total, results: categories });
 
 }
