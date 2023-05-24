@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { Category, User } from "../models";
+import { Category, Product, User } from "../models";
 
 enum Collections {
     CATEGORIES = 'categories',
@@ -21,6 +21,7 @@ export const search = ( req: Request, res: Response ) => {
             break;
         
         case Collections.PRODUCTS:
+            searchProducts( searchTerm, res );
             break;
         
         case Collections.USERS:
@@ -54,7 +55,7 @@ const searchUsers = async( searchTerm: string = '', res: Response ) => {
         });
     }
 
-    //Regular expression to avoid the case sensitive comparison betwen the search term and the name of the user
+    //Regular expression to avoid the case sensitive comparison
     const regexp = new RegExp( searchTerm, 'i' );
 
     const name = { name: regexp };
@@ -90,7 +91,7 @@ const searchCategories = async( searchTerm: string = '', res: Response ) => {
             results: category ? [ category ] : []
         });
     }
-
+    //Regular expression to avoid the case sensitive comparison
     const regexp = new RegExp( searchTerm, 'i' );
 
     const data = {
@@ -105,5 +106,41 @@ const searchCategories = async( searchTerm: string = '', res: Response ) => {
     ]);
 
     res.json({ total, results: categories });
+
+}
+
+const searchProducts = async ( searchTerm: string = '', res: Response ) => {
+    
+    const { ObjectId } = Types;
+    const isMongoId = ObjectId.isValid( searchTerm );
+
+    if( isMongoId ){
+        const product = await Product.findById( searchTerm ).populate( 'category', 'name' );
+        return res.json({
+            results: product ? [ product ] : []
+        });
+    }
+
+    //Regular expression to avoid the case sensitive comparison
+    const regexp = new RegExp( searchTerm, 'i' );
+
+    const name = { name: regexp };
+    const brand = { brand: regexp };
+    const query = { status: true };
+
+    const [ total, products ] = await Promise.all([
+        //Counting the results based on the name or brand of the product and with the status equals true
+        Product.countDocuments({
+            $or: [ name, brand ],
+            $and: [ query ]
+        }),
+        //Searching for a product that matches the name or the brand, with the status equals true and adding its category
+        Product.find({
+            $or: [ name, brand ],
+            $and: [ query ]
+        }).populate( 'category', 'name' )
+    ]);
+
+    res.json({ total, results: products });
 
 }
