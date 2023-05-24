@@ -1,6 +1,13 @@
 import { Types } from "mongoose";
 import { Category, Product, Role, User } from "../models";
 
+const collections = [
+    'categories',
+    'products',
+    'roles',
+    'users'
+];
+
 //Verify if the role sent by the user is a valid value compared to the DB
 export const isValidRole = async( role: string = '' ) => {
     const roleExists = await Role.findOne({ role });
@@ -68,4 +75,15 @@ export const existProduct = async( id: string = '' ) => {
     }else{
         throw new Error(`The id ${id} is not valid`);
     }
+}
+
+export const allowedCollections = ( collection: string = '' ) => {
+
+    const validCollections = collections.includes( collection );
+
+    if( !validCollections ){
+        throw new Error(`The collection ${collection} is not allowed. The allowed collections are: ${collections}`);
+    }
+
+    return true;
 }
