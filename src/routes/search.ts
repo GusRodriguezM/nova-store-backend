@@ -6,8 +6,15 @@ import { validateFields } from "../middlewares";
 
 const router = Router();
 
+const collections = [
+    'categories',
+    'products',
+    'roles',
+    'users'
+];
+
 router.get( '/:collection/:searchTerm', [
-    param( 'collection' ).custom( c => allowedCollections( c ) ),
+    param( 'collection' ).custom( c => allowedCollections( c, collections ) ),
     validateFields
 ], search );
 

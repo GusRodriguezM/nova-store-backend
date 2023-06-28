@@ -1,18 +1,21 @@
 import express, { type Application } from 'express';
 import cors from 'cors';
+import fileUpload from 'express-fileupload';
+import dbConnection from '../database/config';
 
 import authRoutes from '../routes/auth';
 import categoriesRoutes from '../routes/categories';
 import productsRoutes from '../routes/products';
 import searchRoutes from '../routes/search';
+import uploadRoutes from '../routes/uploads';
 import usersRoutes from '../routes/users';
-import dbConnection from '../database/config';
 
 interface APIPaths {
     auth: string;
     categories: string;
     products: string;
     search: string;
+    uploadFiles: string;
     users: string;
 }
 
@@ -25,6 +28,7 @@ class Server {
         categories: '/api/categories',
         products: '/api/products',
         search: '/api/search',
+        uploadFiles: '/api/uploads',
         users: '/api/users'
     }
 
@@ -56,6 +60,12 @@ class Server {
 
         //Public folder
         this.app.use( express.static('public') );
+
+        //File uploads
+        this.app.use(fileUpload({
+            useTempFiles: true,
+            tempFileDir: '/tmp/'
+        }));
     }
 
 
@@ -64,7 +74,8 @@ class Server {
         this.app.use( this.apiPaths.auth, authRoutes );
         this.app.use( this.apiPaths.categories, categoriesRoutes );
         this.app.use( this.apiPaths.products,  productsRoutes );
-        this.app.use( this.apiPaths.search, searchRoutes )
+        this.app.use( this.apiPaths.search, searchRoutes );
+        this.app.use( this.apiPaths.uploadFiles, uploadRoutes )
         this.app.use( this.apiPaths.users, usersRoutes );
     }
 

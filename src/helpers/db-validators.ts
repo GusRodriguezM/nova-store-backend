@@ -1,13 +1,6 @@
 import { Types } from "mongoose";
 import { Category, Product, Role, User } from "../models";
 
-const collections = [
-    'categories',
-    'products',
-    'roles',
-    'users'
-];
-
 //Verify if the role sent by the user is a valid value compared to the DB
 export const isValidRole = async( role: string = '' ) => {
     const roleExists = await Role.findOne({ role });
@@ -77,7 +70,7 @@ export const existProduct = async( id: string = '' ) => {
     }
 }
 
-export const allowedCollections = ( collection: string = '' ) => {
+export const allowedCollections = ( collection: string = '', collections: string[] ) => {
 
     const validCollections = collections.includes( collection );
 

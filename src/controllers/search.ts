@@ -109,6 +109,7 @@ const searchCategories = async( searchTerm: string = '', res: Response ) => {
 
 }
 
+//Function to search in the products collection by the name and the brand
 const searchProducts = async ( searchTerm: string = '', res: Response ) => {
     
     const { ObjectId } = Types;
