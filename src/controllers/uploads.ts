@@ -51,7 +51,12 @@ export const uploadImageToCloudinary = async( req: Request, res: Response ) => {
 
     //Delete previous images (if applies)
     if( model.image ){
-
+        //Getting the name of the image
+        const nameArr = model.image.split('/');
+        const imageName = nameArr[ nameArr.length - 1 ];
+        const [ public_id ] = imageName.split('.');
+        //Send the id obtained to the image to delete (including the folder path) it, so this will avoid to have many images
+        cloudinary.uploader.destroy( `nova-store/${collection}/${public_id}` );
     }
 
     const { tempFilePath }: any = req.files?.file;
